@@ -1,6 +1,14 @@
-title: Prograde Systems
-description: Technical articles, documentation, and engineering logs
-theme: minima
-markdown: kramdown
+title: Prograde Systems Documentation
+description: Technical articles and system documentation for Prograde’s rocketry projects
+remote_theme: just-the-docs/just-the-docs
+color_scheme: dark
+
+# Optional extras
+search_enabled: true
+show_downloads: false
+
+# Navigation settings
+nav_sort: case_insensitive
+
 plugins:
-  - jekyll-feed
+  - jekyll-remote-theme
