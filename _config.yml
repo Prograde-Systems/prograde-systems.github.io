@@ -1,0 +1,6 @@
+title: Prograde Systems
+description: Technical articles, documentation, and engineering logs
+theme: minima
+markdown: kramdown
+plugins:
+  - jekyll-feed
