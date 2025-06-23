@@ -1,17 +1,11 @@
 ---
 title: Prograde Systems
 format: html
+page-layout: full
 ---
 
-# Kalman Filter
+**Prograde Systems** is an open-source, collaborative initiative focused on experimental rocketry and independent aerospace research. Our mission is to develop and share high-quality tools, designs, and knowledge that support advanced rocketry and avionics projects.
 
-Inline example: $\mathbf{x}_k = \mathbf{F} \mathbf{x}_{k-1} + \mathbf{w}_x$
+This site serves as the central hub for our documentation efforts. It includes detailed technical articles, reference materials, and development notes covering a range of topics including flight computer design, navigation and control software, and systems integration.
 
-Block example:
-
-$$
-\begin{aligned}
-\mathbf{x}_k &= \mathbf{F} \mathbf{x}_{k-1} + \mathbf{w}_x \\
-\mathbf{z}_k &= \mathbf{H} \mathbf{x}_k + \mathbf{w}_z
-\end{aligned}
-$$
+By publishing our work openly, we aim to create a transparent and reusable foundation for student teams, independent researchers, and contributors interested in building robust, modern rocketry systems.
