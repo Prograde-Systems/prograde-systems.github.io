@@ -51,9 +51,16 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Prograde Systems",
+    "title": "Welcome to Prograde Systems",
     "section": "",
-    "text": "Kalman Filter\nInline example: \\(\\mathbf{x}_k = \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x\\)\nBlock example:\n\\[\n\\begin{aligned}\n\\mathbf{x}_k &= \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x \\\\\n\\mathbf{z}_k &= \\mathbf{H} \\mathbf{x}_k + \\mathbf{w}_z\n\\end{aligned}\n\\]"
+    "text": "Welcome to the official documentation and technical portal for Prograde Systems, a rocketry and aerospace innovation group.\nExplore our algorithms, projects, and systems developed for precision navigation, data fusion, and control.\n\n\n\n\nNavigation Overview\nAltimeter-Only Kalman Filter\nAbout the Team\n\n\nFor updates, stay tuned to this site or contact the team directly."
+  },
+  {
+    "objectID": "index.html#key-sections",
+    "href": "index.html#key-sections",
+    "title": "Welcome to Prograde Systems",
+    "section": "",
+    "text": "Navigation Overview\nAltimeter-Only Kalman Filter\nAbout the Team\n\n\nFor updates, stay tuned to this site or contact the team directly."
   },
   {
     "objectID": "navigation/index.html",
