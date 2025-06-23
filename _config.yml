@@ -1,14 +1,9 @@
 title: Prograde Systems Documentation
-description: Technical articles and system documentation for Prograde’s rocketry projects
+description: Technical articles and documentation for Prograde Systems
 remote_theme: just-the-docs/just-the-docs
 color_scheme: dark
 
-# Optional extras
-search_enabled: true
-show_downloads: false
-
-# Navigation settings
-nav_sort: case_insensitive
-
 plugins:
   - jekyll-remote-theme
+
+search_enabled: true
