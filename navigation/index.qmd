@@ -1,8 +1,0 @@
----
-title: Navigation Algorithms
-format: html
----
-
-# Navigation Overview
-
-This section covers sensor fusion, filtering, and guidance systems used in Prograde Systems vehicles.
