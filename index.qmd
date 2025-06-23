@@ -1,0 +1,17 @@
+---
+title: Prograde Systems
+format: html
+---
+
+# Kalman Filter
+
+Inline example: $\mathbf{x}_k = \mathbf{F} \mathbf{x}_{k-1} + \mathbf{w}_x$
+
+Block example:
+
+$$
+\begin{aligned}
+\mathbf{x}_k &= \mathbf{F} \mathbf{x}_{k-1} + \mathbf{w}_x \\
+\mathbf{z}_k &= \mathbf{H} \mathbf{x}_k + \mathbf{w}_z
+\end{aligned}
+$$

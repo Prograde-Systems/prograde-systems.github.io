@@ -1,0 +1,30 @@
+project:
+  type: website
+
+website:
+  title: "Prograde Systems"
+  site-url: https://prograde-systems.github.io/
+  favicon: prograde_systems_logo.png  # Optional: add a favicon in your project folder
+  navbar:
+    logo: prograde_systems_logo.png       # Optional: add a logo if you have one
+    left:
+      - text: Home
+        file: index.qmd
+      - text: Navigation
+        menu:
+          - text: Overview
+            file: navigation/index.qmd
+          - text: Altimeter KF
+            file: navigation/altimeter_only_kf.qmd
+      - text: About
+        file: about.qmd
+  page-footer:
+    center: "© 2025 Prograde Systems"
+
+format:
+  html:
+    theme: cosmo           # Change to darkly, flatly, etc.
+    css: styles.css        # Use this to customize look/feel
+    toc: true              # Adds table of contents to the right
+    toc-depth: 2
+    code-copy: true        # Adds a copy button on code blocks
