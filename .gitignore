@@ -1,1 +1,39 @@
-/.quarto/
+# Quarto output
+_site/
+*.html
+
+# System + Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+
+# Logs and temporary files
+*.log
+*.aux
+*.out
+*.toc
+
+# Build installers or downloads
+*.deb
+*.zip
+*.tar.gz
+
+# Python junk (if you ever use Python chunks)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+
+# R junk (if you ever use R chunks)
+.Rhistory
+.RData
+.Rproj.user/
+
+# Jupyter (if applicable)
+.ipynb_checkpoints/
+
+# Node modules (if ever used)
+node_modules/
