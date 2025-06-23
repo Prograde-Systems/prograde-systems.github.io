@@ -39,3 +39,9 @@ __pycache__/
 node_modules/
 _site/
 .quarto/
+*.deb
+_site/
+_site/
+.quarto/
+
+/.quarto/

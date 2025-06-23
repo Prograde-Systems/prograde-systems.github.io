@@ -1,0 +1,59 @@
+---
+title: Altimeter-Only Kalman Filter
+parent: Navigation Algorithms
+nav_order: 1
+---
+
+<!-- Introduction -->
+
+The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.
+
+The **state** contains the variables of concern namely vertical, position, velocity and acceleration. The inherant **noise** in the measurements means there is a degree of uncertainty associated with them.
+
+The states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, **process noise**, which means that the states cannot be estiamted deterministically. 
+
+The term **filtering** referes to the process of *filtering out* noise in the measurements to provide an estimate for the state, given the observed measurements. 
+
+The system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:
+
+$$\mathbf{x}_k = \mathbf{F}\mathbf{x}_{k-1} + \mathbf{w}_x$$
+$$\mathbf{z}_k = \mathbf{H}\mathbf{x}_k + \mathbf{w}_z$$
+Where,
+- $\mathbf{x}_k \in \mathbb{R}^n$ is the **state** ofthe system describing the condition of $n$ elements at timestep $k$.
+- $\mathbf{z}_t \in \mathbb{R}^m$ are the **measurements** at timestep $k$.
+- $\mathbf{w}_x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}_k)$ is the **process noise** at timestep k.
+- $\mathbf{F} \in \mathbb{R}^{n \times n}$ is the **State Transition Matrix**.
+- $\mathbf{H}$ is the measurement model matrix.
+
+Linear time invariant models can also be described with continuous-time state equations of the form:
+
+$$\mathbf{\dot{x}} = \frac{d \mathbf{x}}{dt} = \mathbf{A} \mathbf{x} + \mathbf{L} \mathbf{w}$$
+Where $\mathbf{A}$ and $\mathbf{L}$ are **constant** matrices characterising the behavior of the model, and $\mathbf{w}$ is zero mean Gaussian noise with power spectral density of $\mathbf{\sigma}^2_\mathbf{w}$.
+
+The main difference is that $\mathbf{A}$ models the set of linear differential equations, and is continuous. $\mathbf{F}$ is discrete, and represents a set of linear equations (not differential) which propagates $\mathbf{x}_{k-1}$ to $\mathbf{x}_k$ over a discrete timestep $\Delta t$.
+
+
+
+
+
+## Kalman Filter
+<!-- General overview -->
+
+
+## Prediction Step
+### Propagation Model
+
+### Prediction Jacobian
+
+
+## Measurement Update
+### Measurement Model
+
+### Measurement Jacobian
+
+
+## Filter Limitations
+
+
+## Final Notes
+
