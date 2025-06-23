@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://prograde-systems.github.io/about.html</loc>
-    <lastmod>2025-06-23T16:50:46.767Z</lastmod>
+    <loc>https://prograde-systems.github.io/quarto_guide.html</loc>
+    <lastmod>2025-06-23T23:32:22.691Z</lastmod>
   </url>
   <url>
-    <loc>https://prograde-systems.github.io/navigation/altimeter_only_kf.html</loc>
-    <lastmod>2025-06-23T17:00:33.763Z</lastmod>
+    <loc>https://prograde-systems.github.io/docs/navigation/altimeter_only_kf.html</loc>
+    <lastmod>2025-06-23T22:47:53.865Z</lastmod>
   </url>
   <url>
-    <loc>https://prograde-systems.github.io/index.html</loc>
-    <lastmod>2025-06-23T17:56:16.279Z</lastmod>
+    <loc>https://prograde-systems.github.io/docs/about.html</loc>
+    <lastmod>2025-06-23T22:47:53.858Z</lastmod>
   </url>
   <url>
-    <loc>https://prograde-systems.github.io/navigation/index.html</loc>
-    <lastmod>2025-06-23T16:55:02.627Z</lastmod>
+    <loc>https://prograde-systems.github.io/docs/index.html</loc>
+    <lastmod>2025-06-23T22:47:53.862Z</lastmod>
   </url>
   <url>
-    <loc>https://prograde-systems.github.io/altimeter_only_kf.html</loc>
-    <lastmod>2025-06-23T16:52:57.891Z</lastmod>
+    <loc>https://prograde-systems.github.io/docs/navigation/index.html</loc>
+    <lastmod>2025-06-23T22:47:53.869Z</lastmod>
   </url>
 </urlset>

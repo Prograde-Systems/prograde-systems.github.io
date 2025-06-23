@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Altimeter-Only Kalman Filter – Prograde Systems</title>
+<title>quarto_guide – Prograde Systems</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,7 +65,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./prograde_systems_logo.png" rel="icon" type="image/png">
+<link href="./images/prograde_systems_logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -40,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-5213764c6a63b8fae2d383956328014f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-935fc9411dea8ac6bd52d9e1e5653da1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,37 +104,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles/styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -110,7 +116,7 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./prograde_systems_logo.png" alt="" class="navbar-logo">
+    <img src="./images/prograde_systems_logo.png" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Prograde Systems</span>
@@ -123,7 +129,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="./docs/index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -132,17 +138,17 @@ window.Quarto = {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-navigation">    
         <li>
-    <a class="dropdown-item" href="./navigation/index.html">
+    <a class="dropdown-item" href="./docs/navigation/index.html">
  <span class="dropdown-text">Overview</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./navigation/altimeter_only_kf.html">
+    <a class="dropdown-item" href="./docs/navigation/altimeter_only_kf.html">
  <span class="dropdown-text">Altimeter KF</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="./docs/about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -161,76 +167,88 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#altimeter-only-kalman-filter" id="toc-altimeter-only-kalman-filter" class="nav-link active" data-scroll-target="#altimeter-only-kalman-filter">Altimeter-Only Kalman Filter</a>
+  <li><a href="#quarto-documentation-guide" id="toc-quarto-documentation-guide" class="nav-link active" data-scroll-target="#quarto-documentation-guide">Quarto Documentation Guide</a>
   <ul class="collapse">
-  <li><a href="#kalman-filter" id="toc-kalman-filter" class="nav-link" data-scroll-target="#kalman-filter">Kalman Filter</a></li>
-  <li><a href="#prediction-step" id="toc-prediction-step" class="nav-link" data-scroll-target="#prediction-step">Prediction Step</a></li>
-  <li><a href="#measurement-update" id="toc-measurement-update" class="nav-link" data-scroll-target="#measurement-update">Measurement Update</a></li>
-  <li><a href="#filter-limitations" id="toc-filter-limitations" class="nav-link" data-scroll-target="#filter-limitations">Filter Limitations</a></li>
-  <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">1. Setup</a></li>
+  <li><a href="#editing-content" id="toc-editing-content" class="nav-link" data-scroll-target="#editing-content">2. Editing Content</a></li>
+  <li><a href="#preview-the-site" id="toc-preview-the-site" class="nav-link" data-scroll-target="#preview-the-site">3. Preview the Site</a></li>
+  <li><a href="#render-the-site" id="toc-render-the-site" class="nav-link" data-scroll-target="#render-the-site">4. Render the Site</a></li>
+  <li><a href="#publish-to-github-pages" id="toc-publish-to-github-pages" class="nav-link" data-scroll-target="#publish-to-github-pages">5. Publish to GitHub Pages</a></li>
+  <li><a href="#repository-cleanliness" id="toc-repository-cleanliness" class="nav-link" data-scroll-target="#repository-cleanliness">6. Repository Cleanliness</a></li>
+  <li><a href="#further-resources" id="toc-further-resources" class="nav-link" data-scroll-target="#further-resources">Further Resources</a></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Altimeter-Only Kalman Filter</h1>
-</div>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
-<div class="quarto-title-meta">
 
-    
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<section id="altimeter-only-kalman-filter" class="level1">
-<h1>Altimeter-Only Kalman Filter</h1>
-<p>The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.</p>
-<p>The <strong>state</strong> contains the variables of concern namely vertical, position, velocity and acceleration. The inherant <strong>noise</strong> in the measurements means there is a degree of uncertainty associated with them.</p>
-<p>The states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, <strong>process noise</strong>, which means that the states cannot be estiamted deterministically.</p>
-<p>The term <strong>filtering</strong> referes to the process of <em>filtering out</em> noise in the measurements to provide an estimate for the state, given the observed measurements.</p>
-<p>The system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:</p>
-<p><span class="math display">\[\mathbf{x}_k = \mathbf{F}\mathbf{x}_{k-1} + \mathbf{w}_x\]</span> <span class="math display">\[\mathbf{z}_k = \mathbf{H}\mathbf{x}_k + \mathbf{w}_z\]</span> Where, - <span class="math inline">\(\mathbf{x}_k \in \mathbb{R}^n\)</span> is the <strong>state</strong> ofthe system describing the condition of <span class="math inline">\(n\)</span> elements at timestep <span class="math inline">\(k\)</span>. - <span class="math inline">\(\mathbf{z}_t \in \mathbb{R}^m\)</span> are the <strong>measurements</strong> at timestep <span class="math inline">\(k\)</span>. - <span class="math inline">\(\mathbf{w}_x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}_k)\)</span> is the <strong>process noise</strong> at timestep k. - <span class="math inline">\(\mathbf{F} \in \mathbb{R}^{n \times n}\)</span> is the <strong>State Transition Matrix</strong>. - <span class="math inline">\(\mathbf{H}\)</span> is the measurement model matrix.</p>
-<p>Linear time invariant models can also be described with continuous-time state equations of the form:</p>
-<p><span class="math display">\[\mathbf{\dot{x}} = \frac{d \mathbf{x}}{dt} = \mathbf{A} \mathbf{x} + \mathbf{L} \mathbf{w}\]</span> Where <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{L}\)</span> are <strong>constant</strong> matrices characterising the behavior of the model, and <span class="math inline">\(\mathbf{w}\)</span> is zero mean Gaussian noise with power spectral density of <span class="math inline">\(\mathbf{\sigma}^2_\mathbf{w}\)</span>.</p>
-<p>The main difference is that <span class="math inline">\(\mathbf{A}\)</span> models the set of linear differential equations, and is continuous. <span class="math inline">\(\mathbf{F}\)</span> is discrete, and represents a set of linear equations (not differential) which propagates <span class="math inline">\(\mathbf{x}_{k-1}\)</span> to <span class="math inline">\(\mathbf{x}_k\)</span> over a discrete timestep <span class="math inline">\(\Delta t\)</span>.</p>
-<section id="kalman-filter" class="level2">
-<h2 class="anchored" data-anchor-id="kalman-filter">Kalman Filter</h2>
+<section id="quarto-documentation-guide" class="level1">
+<h1>Quarto Documentation Guide</h1>
+<p>This guide explains how to edit, preview, render, and publish the documentation site using <a href="https://quarto.org">Quarto</a>.</p>
+<hr>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">1. Setup</h2>
+<p>If Quarto is not installed, run:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://quarto.org/download/latest/quarto-linux-amd64.deb</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install ./quarto-linux-amd64.deb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To check the installation:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> <span class="at">--version</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
 </section>
-<section id="prediction-step" class="level2">
-<h2 class="anchored" data-anchor-id="prediction-step">Prediction Step</h2>
-<section id="propagation-model" class="level3">
-<h3 class="anchored" data-anchor-id="propagation-model">Propagation Model</h3>
+<section id="editing-content" class="level2">
+<h2 class="anchored" data-anchor-id="editing-content">2. Editing Content</h2>
+<p>Site content is written in <code>.qmd</code> files:</p>
+<ul>
+<li><code>index.qmd</code>: Main landing page</li>
+<li><code>about.qmd</code>: Information about the team or organisation</li>
+<li><code>navigation/*.qmd</code>: Technical documentation pages</li>
+</ul>
+<p>Use standard Markdown with optional LaTeX-style math and code blocks.</p>
+<hr>
 </section>
-<section id="prediction-jacobian" class="level3">
-<h3 class="anchored" data-anchor-id="prediction-jacobian">Prediction Jacobian</h3>
+<section id="preview-the-site" class="level2">
+<h2 class="anchored" data-anchor-id="preview-the-site">3. Preview the Site</h2>
+<p>To live-preview the site locally as you edit:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This starts a local server (usually at http://localhost:4200) and refreshes automatically when files are saved.</p>
+<hr>
 </section>
+<section id="render-the-site" class="level2">
+<h2 class="anchored" data-anchor-id="render-the-site">4. Render the Site</h2>
+<p>To build the static site into the <code>_site/</code> directory:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This creates the final HTML version of the site locally.</p>
+<hr>
 </section>
-<section id="measurement-update" class="level2">
-<h2 class="anchored" data-anchor-id="measurement-update">Measurement Update</h2>
-<section id="measurement-model" class="level3">
-<h3 class="anchored" data-anchor-id="measurement-model">Measurement Model</h3>
+<section id="publish-to-github-pages" class="level2">
+<h2 class="anchored" data-anchor-id="publish-to-github-pages">5. Publish to GitHub Pages</h2>
+<p>To deploy the site to GitHub Pages (<code>gh-pages</code> branch):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> publish gh-pages</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When prompted, confirm with <code>Y</code>.</p>
+<p>Live site URL:</p>
+<pre><code>https://prograde-systems.github.io</code></pre>
+<hr>
 </section>
-<section id="measurement-jacobian" class="level3">
-<h3 class="anchored" data-anchor-id="measurement-jacobian">Measurement Jacobian</h3>
+<section id="repository-cleanliness" class="level2">
+<h2 class="anchored" data-anchor-id="repository-cleanliness">6. Repository Cleanliness</h2>
+<p>The following should be excluded from version control via <code>.gitignore</code>:</p>
+<pre><code>_site/
+.quarto/
+*.deb</code></pre>
+<p>Only commit source files like <code>.qmd</code>, <code>.css</code>, <code>_quarto.yml</code>, and assets (e.g.&nbsp;images, diagrams).</p>
+<hr>
 </section>
-</section>
-<section id="filter-limitations" class="level2">
-<h2 class="anchored" data-anchor-id="filter-limitations">Filter Limitations</h2>
-</section>
-<section id="final-notes" class="level2">
-<h2 class="anchored" data-anchor-id="final-notes">Final Notes</h2>
+<section id="further-resources" class="level2">
+<h2 class="anchored" data-anchor-id="further-resources">Further Resources</h2>
+<ul>
+<li>Quarto Docs: https://quarto.org/docs/</li>
+<li>Markdown Reference: https://quarto.org/docs/authoring/markdown-basics.html</li>
+<li>Math and Equations: https://quarto.org/docs/authoring/markdown-basics.html#equations</li>
+</ul>
 
 
 </section>

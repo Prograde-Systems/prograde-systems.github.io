@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Navigation Algorithms – Prograde Systems</title>
+<title>Altimeter-Only Kalman Filter – Prograde Systems</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +23,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../prograde_systems_logo.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-5213764c6a63b8fae2d383956328014f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/prograde_systems_logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-935fc9411dea8ac6bd52d9e1e5653da1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,8 +69,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="../styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles/styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -80,10 +109,10 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../prograde_systems_logo.png" alt="" class="navbar-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/prograde_systems_logo.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Prograde Systems</span>
     </a>
   </div>
@@ -94,7 +123,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../docs/index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -103,17 +132,17 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-navigation">    
         <li>
-    <a class="dropdown-item" href="../navigation/index.html">
+    <a class="dropdown-item" href="../../docs/navigation/index.html">
  <span class="dropdown-text">Overview</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../navigation/altimeter_only_kf.html">
+    <a class="dropdown-item" href="../../docs/navigation/altimeter_only_kf.html">
  <span class="dropdown-text">Altimeter KF</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
+    <a class="nav-link" href="../../docs/about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -132,7 +161,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#navigation-overview" id="toc-navigation-overview" class="nav-link active" data-scroll-target="#navigation-overview">Navigation Overview</a></li>
+  <li><a href="#kalman-filter" id="toc-kalman-filter" class="nav-link active" data-scroll-target="#kalman-filter">Kalman Filter</a></li>
+  <li><a href="#prediction-step" id="toc-prediction-step" class="nav-link" data-scroll-target="#prediction-step">Prediction Step</a></li>
+  <li><a href="#measurement-update" id="toc-measurement-update" class="nav-link" data-scroll-target="#measurement-update">Measurement Update</a></li>
+  <li><a href="#filter-limitations" id="toc-filter-limitations" class="nav-link" data-scroll-target="#filter-limitations">Filter Limitations</a></li>
+  <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
   </ul>
 </nav>
     </div>
@@ -141,7 +174,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Navigation Algorithms</h1>
+<h1 class="title">Altimeter-Only Kalman Filter</h1>
 </div>
 
 
@@ -158,9 +191,41 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="navigation-overview" class="level1">
-<h1>Navigation Overview</h1>
-<p>This section covers sensor fusion, filtering, and guidance systems used in Prograde Systems vehicles.</p>
+<p>The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.</p>
+<p>The <strong>state</strong> contains the variables of concern namely vertical, position, velocity and acceleration. The inherant <strong>noise</strong> in the measurements means there is a degree of uncertainty associated with them.</p>
+<p>The states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, <strong>process noise</strong>, which means that the states cannot be estiamted deterministically.</p>
+<p>The term <strong>filtering</strong> referes to the process of <em>filtering out</em> noise in the measurements to provide an estimate for the state, given the observed measurements.</p>
+<p>The system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:</p>
+<p><span class="math display">\[\mathbf{x}_k = \mathbf{F}\mathbf{x}_{k-1} + \mathbf{w}_x\]</span> <span class="math display">\[\mathbf{z}_k = \mathbf{H}\mathbf{x}_k + \mathbf{w}_z\]</span> Where, - <span class="math inline">\(\mathbf{x}_k \in \mathbb{R}^n\)</span> is the <strong>state</strong> ofthe system describing the condition of <span class="math inline">\(n\)</span> elements at timestep <span class="math inline">\(k\)</span>. - <span class="math inline">\(\mathbf{z}_t \in \mathbb{R}^m\)</span> are the <strong>measurements</strong> at timestep <span class="math inline">\(k\)</span>. - <span class="math inline">\(\mathbf{w}_x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}_k)\)</span> is the <strong>process noise</strong> at timestep k. - <span class="math inline">\(\mathbf{F} \in \mathbb{R}^{n \times n}\)</span> is the <strong>State Transition Matrix</strong>. - <span class="math inline">\(\mathbf{H}\)</span> is the measurement model matrix.</p>
+<p>Linear time invariant models can also be described with continuous-time state equations of the form:</p>
+<p><span class="math display">\[\mathbf{\dot{x}} = \frac{d \mathbf{x}}{dt} = \mathbf{A} \mathbf{x} + \mathbf{L} \mathbf{w}\]</span> Where <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{L}\)</span> are <strong>constant</strong> matrices characterising the behavior of the model, and <span class="math inline">\(\mathbf{w}\)</span> is zero mean Gaussian noise with power spectral density of <span class="math inline">\(\mathbf{\sigma}^2_\mathbf{w}\)</span>.</p>
+<p>The main difference is that <span class="math inline">\(\mathbf{A}\)</span> models the set of linear differential equations, and is continuous. <span class="math inline">\(\mathbf{F}\)</span> is discrete, and represents a set of linear equations (not differential) which propagates <span class="math inline">\(\mathbf{x}_{k-1}\)</span> to <span class="math inline">\(\mathbf{x}_k\)</span> over a discrete timestep <span class="math inline">\(\Delta t\)</span>.</p>
+<section id="kalman-filter" class="level2">
+<h2 class="anchored" data-anchor-id="kalman-filter">Kalman Filter</h2>
+</section>
+<section id="prediction-step" class="level2">
+<h2 class="anchored" data-anchor-id="prediction-step">Prediction Step</h2>
+<section id="propagation-model" class="level3">
+<h3 class="anchored" data-anchor-id="propagation-model">Propagation Model</h3>
+</section>
+<section id="prediction-jacobian" class="level3">
+<h3 class="anchored" data-anchor-id="prediction-jacobian">Prediction Jacobian</h3>
+</section>
+</section>
+<section id="measurement-update" class="level2">
+<h2 class="anchored" data-anchor-id="measurement-update">Measurement Update</h2>
+<section id="measurement-model" class="level3">
+<h3 class="anchored" data-anchor-id="measurement-model">Measurement Model</h3>
+</section>
+<section id="measurement-jacobian" class="level3">
+<h3 class="anchored" data-anchor-id="measurement-jacobian">Measurement Jacobian</h3>
+</section>
+</section>
+<section id="filter-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="filter-limitations">Filter Limitations</h2>
+</section>
+<section id="final-notes" class="level2">
+<h2 class="anchored" data-anchor-id="final-notes">Final Notes</h2>
 
 
 </section>

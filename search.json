@@ -1,79 +1,121 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "quarto_guide.html",
+    "href": "quarto_guide.html",
+    "title": "Quarto Documentation Guide",
     "section": "",
-    "text": "About this site"
+    "text": "This guide explains how to edit, preview, render, and publish the documentation site using Quarto.\n\n\n\nIf Quarto is not installed, run:\nwget https://quarto.org/download/latest/quarto-linux-amd64.deb\nsudo apt install ./quarto-linux-amd64.deb\nTo check the installation:\nquarto --version\n\n\n\n\nSite content is written in .qmd files:\n\nindex.qmd: Main landing page\nabout.qmd: Information about the team or organisation\nnavigation/*.qmd: Technical documentation pages\n\nUse standard Markdown with optional LaTeX-style math and code blocks.\n\n\n\n\nTo live-preview the site locally as you edit:\nquarto preview\nThis starts a local server (usually at http://localhost:4200) and refreshes automatically when files are saved.\n\n\n\n\nTo build the static site into the _site/ directory:\nquarto render\nThis creates the final HTML version of the site locally.\n\n\n\n\nTo deploy the site to GitHub Pages (gh-pages branch):\nquarto publish gh-pages\nWhen prompted, confirm with Y.\nLive site URL:\nhttps://prograde-systems.github.io\n\n\n\n\nThe following should be excluded from version control via .gitignore:\n_site/\n.quarto/\n*.deb\nOnly commit source files like .qmd, .css, _quarto.yml, and assets (e.g. images, diagrams).\n\n\n\n\n\nQuarto Docs: https://quarto.org/docs/\nMarkdown Reference: https://quarto.org/docs/authoring/markdown-basics.html\nMath and Equations: https://quarto.org/docs/authoring/markdown-basics.html#equations"
   },
   {
-    "objectID": "navigation/altimeter_only_kf.html",
-    "href": "navigation/altimeter_only_kf.html",
+    "objectID": "quarto_guide.html#setup",
+    "href": "quarto_guide.html#setup",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "If Quarto is not installed, run:\nwget https://quarto.org/download/latest/quarto-linux-amd64.deb\nsudo apt install ./quarto-linux-amd64.deb\nTo check the installation:\nquarto --version"
+  },
+  {
+    "objectID": "quarto_guide.html#editing-content",
+    "href": "quarto_guide.html#editing-content",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "Site content is written in .qmd files:\n\nindex.qmd: Main landing page\nabout.qmd: Information about the team or organisation\nnavigation/*.qmd: Technical documentation pages\n\nUse standard Markdown with optional LaTeX-style math and code blocks."
+  },
+  {
+    "objectID": "quarto_guide.html#preview-the-site",
+    "href": "quarto_guide.html#preview-the-site",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "To live-preview the site locally as you edit:\nquarto preview\nThis starts a local server (usually at http://localhost:4200) and refreshes automatically when files are saved."
+  },
+  {
+    "objectID": "quarto_guide.html#render-the-site",
+    "href": "quarto_guide.html#render-the-site",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "To build the static site into the _site/ directory:\nquarto render\nThis creates the final HTML version of the site locally."
+  },
+  {
+    "objectID": "quarto_guide.html#publish-to-github-pages",
+    "href": "quarto_guide.html#publish-to-github-pages",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "To deploy the site to GitHub Pages (gh-pages branch):\nquarto publish gh-pages\nWhen prompted, confirm with Y.\nLive site URL:\nhttps://prograde-systems.github.io"
+  },
+  {
+    "objectID": "quarto_guide.html#repository-cleanliness",
+    "href": "quarto_guide.html#repository-cleanliness",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "The following should be excluded from version control via .gitignore:\n_site/\n.quarto/\n*.deb\nOnly commit source files like .qmd, .css, _quarto.yml, and assets (e.g. images, diagrams)."
+  },
+  {
+    "objectID": "quarto_guide.html#further-resources",
+    "href": "quarto_guide.html#further-resources",
+    "title": "Quarto Documentation Guide",
+    "section": "",
+    "text": "Quarto Docs: https://quarto.org/docs/\nMarkdown Reference: https://quarto.org/docs/authoring/markdown-basics.html\nMath and Equations: https://quarto.org/docs/authoring/markdown-basics.html#equations"
+  },
+  {
+    "objectID": "docs/navigation/altimeter_only_kf.html",
+    "href": "docs/navigation/altimeter_only_kf.html",
     "title": "Altimeter-Only Kalman Filter",
     "section": "",
     "text": "The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.\nThe state contains the variables of concern namely vertical, position, velocity and acceleration. The inherant noise in the measurements means there is a degree of uncertainty associated with them.\nThe states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, process noise, which means that the states cannot be estiamted deterministically.\nThe term filtering referes to the process of filtering out noise in the measurements to provide an estimate for the state, given the observed measurements.\nThe system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:\n\\[\\mathbf{x}_k = \\mathbf{F}\\mathbf{x}_{k-1} + \\mathbf{w}_x\\] \\[\\mathbf{z}_k = \\mathbf{H}\\mathbf{x}_k + \\mathbf{w}_z\\] Where, - \\(\\mathbf{x}_k \\in \\mathbb{R}^n\\) is the state ofthe system describing the condition of \\(n\\) elements at timestep \\(k\\). - \\(\\mathbf{z}_t \\in \\mathbb{R}^m\\) are the measurements at timestep \\(k\\). - \\(\\mathbf{w}_x \\sim \\mathcal{N}(\\mathbf{0}, \\mathbf{Q}_k)\\) is the process noise at timestep k. - \\(\\mathbf{F} \\in \\mathbb{R}^{n \\times n}\\) is the State Transition Matrix. - \\(\\mathbf{H}\\) is the measurement model matrix.\nLinear time invariant models can also be described with continuous-time state equations of the form:\n\\[\\mathbf{\\dot{x}} = \\frac{d \\mathbf{x}}{dt} = \\mathbf{A} \\mathbf{x} + \\mathbf{L} \\mathbf{w}\\] Where \\(\\mathbf{A}\\) and \\(\\mathbf{L}\\) are constant matrices characterising the behavior of the model, and \\(\\mathbf{w}\\) is zero mean Gaussian noise with power spectral density of \\(\\mathbf{\\sigma}^2_\\mathbf{w}\\).\nThe main difference is that \\(\\mathbf{A}\\) models the set of linear differential equations, and is continuous. \\(\\mathbf{F}\\) is discrete, and represents a set of linear equations (not differential) which propagates \\(\\mathbf{x}_{k-1}\\) to \\(\\mathbf{x}_k\\) over a discrete timestep \\(\\Delta t\\)."
   },
   {
-    "objectID": "navigation/altimeter_only_kf.html#kalman-filter",
-    "href": "navigation/altimeter_only_kf.html#kalman-filter",
+    "objectID": "docs/navigation/altimeter_only_kf.html#kalman-filter",
+    "href": "docs/navigation/altimeter_only_kf.html#kalman-filter",
     "title": "Altimeter-Only Kalman Filter",
     "section": "Kalman Filter",
     "text": "Kalman Filter"
   },
   {
-    "objectID": "navigation/altimeter_only_kf.html#prediction-step",
-    "href": "navigation/altimeter_only_kf.html#prediction-step",
+    "objectID": "docs/navigation/altimeter_only_kf.html#prediction-step",
+    "href": "docs/navigation/altimeter_only_kf.html#prediction-step",
     "title": "Altimeter-Only Kalman Filter",
     "section": "Prediction Step",
     "text": "Prediction Step\n\nPropagation Model\n\n\nPrediction Jacobian"
   },
   {
-    "objectID": "navigation/altimeter_only_kf.html#measurement-update",
-    "href": "navigation/altimeter_only_kf.html#measurement-update",
+    "objectID": "docs/navigation/altimeter_only_kf.html#measurement-update",
+    "href": "docs/navigation/altimeter_only_kf.html#measurement-update",
     "title": "Altimeter-Only Kalman Filter",
     "section": "Measurement Update",
     "text": "Measurement Update\n\nMeasurement Model\n\n\nMeasurement Jacobian"
   },
   {
-    "objectID": "navigation/altimeter_only_kf.html#filter-limitations",
-    "href": "navigation/altimeter_only_kf.html#filter-limitations",
+    "objectID": "docs/navigation/altimeter_only_kf.html#filter-limitations",
+    "href": "docs/navigation/altimeter_only_kf.html#filter-limitations",
     "title": "Altimeter-Only Kalman Filter",
     "section": "Filter Limitations",
     "text": "Filter Limitations"
   },
   {
-    "objectID": "navigation/altimeter_only_kf.html#final-notes",
-    "href": "navigation/altimeter_only_kf.html#final-notes",
+    "objectID": "docs/navigation/altimeter_only_kf.html#final-notes",
+    "href": "docs/navigation/altimeter_only_kf.html#final-notes",
     "title": "Altimeter-Only Kalman Filter",
     "section": "Final Notes",
     "text": "Final Notes"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome to Prograde Systems",
+    "objectID": "docs/about.html",
+    "href": "docs/about.html",
+    "title": "About",
     "section": "",
-    "text": "Welcome to the official documentation and technical portal for Prograde Systems, a rocketry and aerospace innovation group.\nExplore our algorithms, projects, and systems developed for precision navigation, data fusion, and control.\n\n\n\n\nNavigation Overview\nAltimeter-Only Kalman Filter\nAbout the Team\n\n\nFor updates, stay tuned to this site or contact the team directly."
+    "text": "About this site"
   },
   {
-    "objectID": "index.html#key-sections",
-    "href": "index.html#key-sections",
-    "title": "Welcome to Prograde Systems",
+    "objectID": "docs/index.html",
+    "href": "docs/index.html",
+    "title": "Prograde Systems",
     "section": "",
-    "text": "Navigation Overview\nAltimeter-Only Kalman Filter\nAbout the Team\n\n\nFor updates, stay tuned to this site or contact the team directly."
+    "text": "Kalman Filter\nInline example: \\(\\mathbf{x}_k = \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x\\)\nBlock example:\n\\[\n\\begin{aligned}\n\\mathbf{x}_k &= \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x \\\\\n\\mathbf{z}_k &= \\mathbf{H} \\mathbf{x}_k + \\mathbf{w}_z\n\\end{aligned}\n\\]"
   },
   {
-    "objectID": "navigation/index.html",
-    "href": "navigation/index.html",
+    "objectID": "docs/navigation/index.html",
+    "href": "docs/navigation/index.html",
     "title": "Navigation Algorithms",
     "section": "",
     "text": "Navigation Overview\nThis section covers sensor fusion, filtering, and guidance systems used in Prograde Systems vehicles."
-  },
-  {
-    "objectID": "altimeter_only_kf.html",
-    "href": "altimeter_only_kf.html",
-    "title": "Altimeter-Only Kalman Filter",
-    "section": "",
-    "text": "The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.\nThe state contains the variables of concern namely vertical, position, velocity and acceleration. The inherant noise in the measurements means there is a degree of uncertainty associated with them.\nThe states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, process noise, which means that the states cannot be estiamted deterministically.\nThe term filtering referes to the process of filtering out noise in the measurements to provide an estimate for the state, given the observed measurements.\nThe system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:\n\\[\\mathbf{x}_k = \\mathbf{F}\\mathbf{x}_{k-1} + \\mathbf{w}_x\\] \\[\\mathbf{z}_k = \\mathbf{H}\\mathbf{x}_k + \\mathbf{w}_z\\] Where, - \\(\\mathbf{x}_k \\in \\mathbb{R}^n\\) is the state ofthe system describing the condition of \\(n\\) elements at timestep \\(k\\). - \\(\\mathbf{z}_t \\in \\mathbb{R}^m\\) are the measurements at timestep \\(k\\). - \\(\\mathbf{w}_x \\sim \\mathcal{N}(\\mathbf{0}, \\mathbf{Q}_k)\\) is the process noise at timestep k. - \\(\\mathbf{F} \\in \\mathbb{R}^{n \\times n}\\) is the State Transition Matrix. - \\(\\mathbf{H}\\) is the measurement model matrix.\nLinear time invariant models can also be described with continuous-time state equations of the form:\n\\[\\mathbf{\\dot{x}} = \\frac{d \\mathbf{x}}{dt} = \\mathbf{A} \\mathbf{x} + \\mathbf{L} \\mathbf{w}\\] Where \\(\\mathbf{A}\\) and \\(\\mathbf{L}\\) are constant matrices characterising the behavior of the model, and \\(\\mathbf{w}\\) is zero mean Gaussian noise with power spectral density of \\(\\mathbf{\\sigma}^2_\\mathbf{w}\\).\nThe main difference is that \\(\\mathbf{A}\\) models the set of linear differential equations, and is continuous. \\(\\mathbf{F}\\) is discrete, and represents a set of linear equations (not differential) which propagates \\(\\mathbf{x}_{k-1}\\) to \\(\\mathbf{x}_k\\) over a discrete timestep \\(\\Delta t\\)."
   }
 ]
