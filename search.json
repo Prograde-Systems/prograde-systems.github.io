@@ -56,6 +56,20 @@
     "text": "Quarto Docs: https://quarto.org/docs/\nMarkdown Reference: https://quarto.org/docs/authoring/markdown-basics.html\nMath and Equations: https://quarto.org/docs/authoring/markdown-basics.html#equations"
   },
   {
+    "objectID": "docs/navigation/index.html",
+    "href": "docs/navigation/index.html",
+    "title": "Navigation Algorithms",
+    "section": "",
+    "text": "Navigation Overview\nThis section covers sensor fusion, filtering, and guidance systems used in Prograde Systems vehicles."
+  },
+  {
+    "objectID": "docs/about.html",
+    "href": "docs/about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
     "objectID": "docs/navigation/altimeter_only_kf.html",
     "href": "docs/navigation/altimeter_only_kf.html",
     "title": "Altimeter-Only Kalman Filter",
@@ -98,24 +112,10 @@
     "text": "Final Notes"
   },
   {
-    "objectID": "docs/about.html",
-    "href": "docs/about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
-  },
-  {
-    "objectID": "docs/index.html",
-    "href": "docs/index.html",
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "Prograde Systems",
     "section": "",
     "text": "Kalman Filter\nInline example: \\(\\mathbf{x}_k = \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x\\)\nBlock example:\n\\[\n\\begin{aligned}\n\\mathbf{x}_k &= \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x \\\\\n\\mathbf{z}_k &= \\mathbf{H} \\mathbf{x}_k + \\mathbf{w}_z\n\\end{aligned}\n\\]"
-  },
-  {
-    "objectID": "docs/navigation/index.html",
-    "href": "docs/navigation/index.html",
-    "title": "Navigation Algorithms",
-    "section": "",
-    "text": "Navigation Overview\nThis section covers sensor fusion, filtering, and guidance systems used in Prograde Systems vehicles."
   }
 ]

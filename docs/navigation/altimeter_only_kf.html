@@ -123,7 +123,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -191,6 +191,7 @@ window.Quarto = {
 </header>
 
 
+<!-- Introduction -->
 <p>The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.</p>
 <p>The <strong>state</strong> contains the variables of concern namely vertical, position, velocity and acceleration. The inherant <strong>noise</strong> in the measurements means there is a degree of uncertainty associated with them.</p>
 <p>The states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, <strong>process noise</strong>, which means that the states cannot be estiamted deterministically.</p>
@@ -202,6 +203,7 @@ window.Quarto = {
 <p>The main difference is that <span class="math inline">\(\mathbf{A}\)</span> models the set of linear differential equations, and is continuous. <span class="math inline">\(\mathbf{F}\)</span> is discrete, and represents a set of linear equations (not differential) which propagates <span class="math inline">\(\mathbf{x}_{k-1}\)</span> to <span class="math inline">\(\mathbf{x}_k\)</span> over a discrete timestep <span class="math inline">\(\Delta t\)</span>.</p>
 <section id="kalman-filter" class="level2">
 <h2 class="anchored" data-anchor-id="kalman-filter">Kalman Filter</h2>
+<!-- General overview -->
 </section>
 <section id="prediction-step" class="level2">
 <h2 class="anchored" data-anchor-id="prediction-step">Prediction Step</h2>
