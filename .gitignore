@@ -37,3 +37,4 @@ __pycache__/
 
 # Node modules (if ever used)
 node_modules/
+_site/
