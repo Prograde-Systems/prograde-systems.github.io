@@ -38,18 +38,46 @@ The main difference is that $\mathbf{A}$ models the set of linear differential e
 
 ## Kalman Filter
 <!-- General overview -->
+The Kalman filter [TODO - ref] is a recursive state estimation algorithm widely used for aerospace applications. It combines predictions from a system model with noisy sensor measurements to estimate the system's state and associated uncertainty. 
+
+The Kalman filter has two steps:
+
+### Prediction Step
+The **prediction step** advances both the estimated state and its associated uncertainty (covariance) from timestep $k-1$ to timestep $k$ over the interval $\Delta t$:
+
+$$
+\hat{\mathbf{x}}_k = \mathbf{F} \mathbf{x}_{k-1} + \mathbf{B} \mathbf{u}_{k}
+$$
+
+$$
+\hat{\mathbf{P}}_k = \mathbf{F} \mathbf{P}_{k-1} \mathbf{F}^\top + \mathbf{Q}_k
+$$
+
+Here:
+
+- $\mathbf{F}$ is the **state transition matrix**, which linearly propagates the system state forward based on a model of the dynamics.
+- $\mathbf{B}$ maps control inputs $\mathbf{u}_k$ to their effect on the state.
+- $\mathbf{Q}_k$ represents the **process noise covariance**, accounting for uncertainty in the model.
+
+The covariance update involves both **pre- and post-multiplication by $\mathbf{F}$** to properly propagate uncertainty through the linear transformation. This reflects how uncertainty transforms under linear mappings — intuitively, the uncertainty ellipse is "stretched and rotated" by the transition model, and the full transformation is captured by $\mathbf{F} \mathbf{P}_{k-1} \mathbf{F}^\top$.
+
+If using an **Extended Kalman Filter (EKF)**, $\mathbf{F}$ would be the **Jacobian of the motion model** with respect to the state, evaluated at the previous estimate.
+
+### Update Step
 
 
-## Prediction Step
-### Propagation Model
+## Filter Derivation
 
-### Prediction Jacobian
+### Prediction Step
+#### Propagation Model
+
+#### Prediction Jacobian
 
 
-## Measurement Update
-### Measurement Model
+### Measurement Update
+#### Measurement Model
 
-### Measurement Jacobian
+#### Measurement Jacobian
 
 
 ## Filter Limitations
