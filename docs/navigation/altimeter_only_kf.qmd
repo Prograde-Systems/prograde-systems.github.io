@@ -18,22 +18,147 @@ freeze: auto
 
 
 ## Overview
-- Purpose of the filter: estimating vertical position, velocity, and acceleration from altimeter measurements
-- Context of use (e.g., onboard state estimation for a rocket launch)
-- Summary of the model: 1D, constant acceleration, discrete-time Kalman filter
+The objective of this filter is to estimate the vertical position, velocity, and acceleration of a rocket in real time using altimeter data. These estimates are critical for detecting key flight events such as launch, burnout, apogee, and landing.
+
+The proposed filter operates under a one-dimensional (1D) model of rocket flight and assumes constant acceleration between discrete time steps. A discrete-time Kalman filter is employed to integrate sensor measurements and generate robust state estimates throughout the rocket’s flight.
+
+The system is designed to work with a barometric altimeter, sampling at a variable rate, and accounting for zero mean Gaussian barometer sensor noise.
+
+The filter is designed to run on a resource-constrained microcontroller as part of a rocket's flight computer, enabling onboard, real-time processing. Its outputs can used to trigger events such as parachute deployment and to provide reliable telemetry for post-flight analysis.
+
+By balancing simplicity with performance, this filter provides a lightweight yet effective solution for real-time rocket flight state estimation.
 
 ## System Model
 
 ### State Vector
-- Description of the state components:
-  - Position (altitude above launch site)
-  - Velocity (vertical speed)
-  - Acceleration (vertical acceleration)
+The state vector, $\mathbf{x}$, contains the key states for which the Kalman Filter generates estimates. 
+
+$$\mathbf{x}_k = \begin{bmatrix}h \\ \dot{h}\\ \ddot{h} \end{bmatrix}$$
+
+Where,
+
+- $h$ is altitude. 
+
+- $\dot{h}$ is vertical velocity. 
+
+- $\ddot{h}$ is vertical acceleration.
 
 ### Process Model
-- Assumes constant acceleration
-- Time-varying state transition matrix (dependent on `dt`)
-- Includes process noise applied to the acceleration component
+This filter eploys the constant acceleration process model, meaning that in between measurement updates the acceleration is assumed to be constant.
+
+The process model is derived from the kinematic equations of motion:
+
+$$\frac{d}{dt} \begin{bmatrix}h(t) \\ \dot{h}(t)\\ \ddot{h}(t)\end{bmatrix} = \begin{bmatrix}\dot{h}(t) \\ \ddot{h}(t) \\ 0\end{bmatrix}$$
+
+The system can be expressed in matrix form as a continuous-time linear differential equation:
+
+$$
+\frac{d \mathbf{x}(t)}{dt} = \mathbf{A} \mathbf{x}(t),
+\quad \text{where} \quad
+\mathbf{A} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+0 & 0 & 0
+\end{bmatrix}
+$$
+
+To apply this model in a discrete-time Kalman Filter, it must be discretised over a timestep $\Delta t$, resulting in a state transition matrix $\mathbf{F}_k$. This discretisation is derived using the **matrix exponential** of the continuous-time system matrix $\mathbf{A}$:
+
+$$
+\mathbf{F}_k = e^{\mathbf{A} \Delta t}
+$$
+
+For this system, $\mathbf{A}$ is a **nilpotent matrix** (i.e., $\mathbf{A}^3 = 0$), so the matrix exponential can be computed exactly using a truncated Taylor series:
+
+$$
+e^{\mathbf{A} \Delta t} = \mathbf{I} + \mathbf{A} \Delta t + \frac{1}{2!} \mathbf{A}^2 \Delta t^2
+$$
+
+Calculating the terms:
+
+$$
+\mathbf{A} =
+\begin{bmatrix}
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+0 & 0 & 0
+\end{bmatrix}, \quad
+\mathbf{A}^2 =
+\begin{bmatrix}
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0
+\end{bmatrix}, \quad
+\mathbf{A}^3 = \mathbf{0}
+$$
+
+Substituting into the series:
+
+$$
+\mathbf{F}_k = \mathbf{I} + \mathbf{A} \Delta t + \frac{1}{2} \mathbf{A}^2 \Delta t^2 =
+\begin{bmatrix}
+1 & \Delta t & \frac{1}{2} \Delta t^2 \\
+0 & 1 & \Delta t \\
+0 & 0 & 1
+\end{bmatrix}
+$$
+
+Thus, the discrete-time process model becomes:
+
+$$
+\mathbf{x}_k = \mathbf{F}_k \mathbf{x}_{k-1} + \mathbf{w}_{k-1}
+$$
+
+Where $\mathbf{w}_{k-1} \sim \mathcal{N}(0, \mathbf{Q}_k)$ is the process noise, which models uncertainty in the acceleration dynamics.
+
+
+In the discrete-time process model:
+
+$$
+\mathbf{x}_k = \mathbf{F}_k \mathbf{x}_{k-1} + \mathbf{w}_{k-1}
+$$
+
+the process noise $\mathbf{w}_{k-1} \sim \mathcal{N}(0, \mathbf{Q}_k)$ accounts for uncertainty in the system dynamics - primarily unmodelled forces or variability in acceleration.
+
+We assume the noise enters through the acceleration term only, meaning the system is affected by a continuous-time white noise acceleration input with variance $\sigma_a^2$. This leads to a **discrete-time process noise covariance matrix** $\mathbf{Q}_k$ derived using the following:
+
+$$
+\mathbf{Q}_k = \int_0^{\Delta t} e^{\mathbf{A} \tau} \mathbf{G} \mathbf{Q}_c \mathbf{G}^T e^{\mathbf{A}^T \tau} d\tau
+$$
+
+Where:
+- $\mathbf{A}$ is the continuous-time system matrix,
+- $\mathbf{G}$ is the noise input matrix,
+- $\mathbf{Q}_c = \sigma_a^2$ is the continuous-time noise intensity (scalar),
+- $\Delta t$ is the time step.
+
+For a system with noise entering only through acceleration:
+
+$$
+\mathbf{G} =
+\begin{bmatrix}
+0 \\
+0 \\
+1
+\end{bmatrix}
+$$
+
+Following the derivation (or by using known results for a constant-acceleration model), the resulting discrete-time process noise covariance matrix is:
+
+$$
+\mathbf{Q}_k =
+\sigma_a^2
+\begin{bmatrix}
+\frac{1}{4} \Delta t^4 & \frac{1}{2} \Delta t^3 & \frac{1}{2} \Delta t^2 \\
+\frac{1}{2} \Delta t^3 & \Delta t^2 & \Delta t \\
+\frac{1}{2} \Delta t^2 & \Delta t & 1
+\end{bmatrix}
+$$
+
+This matrix captures how acceleration noise propagates into uncertainty in position and velocity over time.
+
+
 
 ### Measurement Model
 - Single altimeter measurement (position only)
@@ -75,9 +200,10 @@ freeze: auto
 - Notes on synchronization and timekeeping
 
 ## Limitations
-- Assumes motion along a single vertical axis
-- Sensitive to poorly tuned noise parameters
-- Requires consistent time steps for accurate prediction
+- Barometric readings
+- Vent hole sizing
+- Supersonic effects
+
 
 ## Future Improvements
 - Fuse additional sensors (e.g., IMU) using an Extended Kalman Filter
