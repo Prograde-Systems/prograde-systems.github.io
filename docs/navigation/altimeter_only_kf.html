@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Jack Johnston">
+<meta name="dcterms.date" content="2025-06-24">
 
-<title>Altimeter-Only Kalman Filter – Prograde Systems</title>
+<title>Altimeter Constant Acceleration Kalman Filter – Prograde Systems</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -69,35 +106,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../../styles/styles.css">
 </head>
@@ -160,11 +168,30 @@ window.Quarto = {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a></li>
+  <li><a href="#system-model" id="toc-system-model" class="nav-link" data-scroll-target="#system-model"><span class="header-section-number">2</span> System Model</a>
   <ul class="collapse">
-  <li><a href="#kalman-filter" id="toc-kalman-filter" class="nav-link active" data-scroll-target="#kalman-filter">Kalman Filter</a></li>
-  <li><a href="#filter-derivation" id="toc-filter-derivation" class="nav-link" data-scroll-target="#filter-derivation">Filter Derivation</a></li>
-  <li><a href="#filter-limitations" id="toc-filter-limitations" class="nav-link" data-scroll-target="#filter-limitations">Filter Limitations</a></li>
-  <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
+  <li><a href="#state-vector" id="toc-state-vector" class="nav-link" data-scroll-target="#state-vector"><span class="header-section-number">2.1</span> State Vector</a></li>
+  <li><a href="#process-model" id="toc-process-model" class="nav-link" data-scroll-target="#process-model"><span class="header-section-number">2.2</span> Process Model</a></li>
+  <li><a href="#measurement-model" id="toc-measurement-model" class="nav-link" data-scroll-target="#measurement-model"><span class="header-section-number">2.3</span> Measurement Model</a></li>
+  </ul></li>
+  <li><a href="#filter-structure" id="toc-filter-structure" class="nav-link" data-scroll-target="#filter-structure"><span class="header-section-number">3</span> Filter Structure</a>
+  <ul class="collapse">
+  <li><a href="#initialization" id="toc-initialization" class="nav-link" data-scroll-target="#initialization"><span class="header-section-number">3.1</span> Initialization</a></li>
+  <li><a href="#prediction-step" id="toc-prediction-step" class="nav-link" data-scroll-target="#prediction-step"><span class="header-section-number">3.2</span> Prediction Step</a></li>
+  <li><a href="#update-step" id="toc-update-step" class="nav-link" data-scroll-target="#update-step"><span class="header-section-number">3.3</span> Update Step</a></li>
+  </ul></li>
+  <li><a href="#tare-mechanism" id="toc-tare-mechanism" class="nav-link" data-scroll-target="#tare-mechanism"><span class="header-section-number">4</span> Tare Mechanism</a></li>
+  <li><a href="#parameters-and-tuning" id="toc-parameters-and-tuning" class="nav-link" data-scroll-target="#parameters-and-tuning"><span class="header-section-number">5</span> Parameters and Tuning</a></li>
+  <li><a href="#example-usage" id="toc-example-usage" class="nav-link" data-scroll-target="#example-usage"><span class="header-section-number">6</span> Example Usage</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations"><span class="header-section-number">7</span> Limitations</a></li>
+  <li><a href="#future-improvements" id="toc-future-improvements" class="nav-link" data-scroll-target="#future-improvements"><span class="header-section-number">8</span> Future Improvements</a></li>
+  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix"><span class="header-section-number">9</span> Appendix</a>
+  <ul class="collapse">
+  <li><a href="#class-summary" id="toc-class-summary" class="nav-link" data-scroll-target="#class-summary"><span class="header-section-number">9.1</span> Class Summary</a></li>
+  <li><a href="#code-snippet" id="toc-code-snippet" class="nav-link" data-scroll-target="#code-snippet"><span class="header-section-number">9.2</span> Code Snippet</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -173,14 +200,26 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Altimeter-Only Kalman Filter</h1>
+<div class="quarto-title-block"><div><h1 class="title">Altimeter Constant Acceleration Kalman Filter</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jack Johnston </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 24, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -190,71 +229,136 @@ window.Quarto = {
 </header>
 
 
-<!-- Introduction -->
-<p>The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.</p>
-<p>The <strong>state</strong> contains the variables of concern namely vertical, position, velocity and acceleration. The inherant <strong>noise</strong> in the measurements means there is a degree of uncertainty associated with them.</p>
-<p>The states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, <strong>process noise</strong>, which means that the states cannot be estiamted deterministically.</p>
-<p>The term <strong>filtering</strong> referes to the process of <em>filtering out</em> noise in the measurements to provide an estimate for the state, given the observed measurements.</p>
-<p>The system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:</p>
-<p><span class="math display">\[\mathbf{x}_k = \mathbf{F}\mathbf{x}_{k-1} + \mathbf{w}_x\]</span> <span class="math display">\[\mathbf{z}_k = \mathbf{H}\mathbf{x}_k + \mathbf{w}_z\]</span> Where, - <span class="math inline">\(\mathbf{x}_k \in \mathbb{R}^n\)</span> is the <strong>state</strong> ofthe system describing the condition of <span class="math inline">\(n\)</span> elements at timestep <span class="math inline">\(k\)</span>. - <span class="math inline">\(\mathbf{z}_t \in \mathbb{R}^m\)</span> are the <strong>measurements</strong> at timestep <span class="math inline">\(k\)</span>. - <span class="math inline">\(\mathbf{w}_x \sim \mathcal{N}(\mathbf{0}, \mathbf{Q}_k)\)</span> is the <strong>process noise</strong> at timestep k. - <span class="math inline">\(\mathbf{F} \in \mathbb{R}^{n \times n}\)</span> is the <strong>State Transition Matrix</strong>. - <span class="math inline">\(\mathbf{H}\)</span> is the measurement model matrix.</p>
-<p>Linear time invariant models can also be described with continuous-time state equations of the form:</p>
-<p><span class="math display">\[\mathbf{\dot{x}} = \frac{d \mathbf{x}}{dt} = \mathbf{A} \mathbf{x} + \mathbf{L} \mathbf{w}\]</span> Where <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{L}\)</span> are <strong>constant</strong> matrices characterising the behavior of the model, and <span class="math inline">\(\mathbf{w}\)</span> is zero mean Gaussian noise with power spectral density of <span class="math inline">\(\mathbf{\sigma}^2_\mathbf{w}\)</span>.</p>
-<p>The main difference is that <span class="math inline">\(\mathbf{A}\)</span> models the set of linear differential equations, and is continuous. <span class="math inline">\(\mathbf{F}\)</span> is discrete, and represents a set of linear equations (not differential) which propagates <span class="math inline">\(\mathbf{x}_{k-1}\)</span> to <span class="math inline">\(\mathbf{x}_k\)</span> over a discrete timestep <span class="math inline">\(\Delta t\)</span>.</p>
-<section id="kalman-filter" class="level2">
-<h2 class="anchored" data-anchor-id="kalman-filter">Kalman Filter</h2>
-<!-- General overview -->
-<p>The Kalman filter [TODO - ref] is a recursive state estimation algorithm widely used for aerospace applications. It combines predictions from a system model with noisy sensor measurements to estimate the system’s state and associated uncertainty.</p>
-<p>The Kalman filter has two steps:</p>
-<section id="prediction-step" class="level3">
-<h3 class="anchored" data-anchor-id="prediction-step">Prediction Step</h3>
-<p>The <strong>prediction step</strong> advances both the estimated state and its associated uncertainty (covariance) from timestep <span class="math inline">\(k-1\)</span> to timestep <span class="math inline">\(k\)</span> over the interval <span class="math inline">\(\Delta t\)</span>:</p>
-<p><span class="math display">\[
-\hat{\mathbf{x}}_k = \mathbf{F} \mathbf{x}_{k-1} + \mathbf{B} \mathbf{u}_{k}
-\]</span></p>
-<p><span class="math display">\[
-\hat{\mathbf{P}}_k = \mathbf{F} \mathbf{P}_{k-1} \mathbf{F}^\top + \mathbf{Q}_k
-\]</span></p>
-<p>Here:</p>
+<section id="overview" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="overview"><span class="header-section-number">1</span> Overview</h2>
 <ul>
-<li><span class="math inline">\(\mathbf{F}\)</span> is the <strong>state transition matrix</strong>, which linearly propagates the system state forward based on a model of the dynamics.</li>
-<li><span class="math inline">\(\mathbf{B}\)</span> maps control inputs <span class="math inline">\(\mathbf{u}_k\)</span> to their effect on the state.</li>
-<li><span class="math inline">\(\mathbf{Q}_k\)</span> represents the <strong>process noise covariance</strong>, accounting for uncertainty in the model.</li>
+<li>Purpose of the filter: estimating vertical position, velocity, and acceleration from altimeter measurements</li>
+<li>Context of use (e.g., onboard state estimation for a rocket launch)</li>
+<li>Summary of the model: 1D, constant acceleration, discrete-time Kalman filter</li>
 </ul>
-<p>The covariance update involves both <strong>pre- and post-multiplication by <span class="math inline">\(\mathbf{F}\)</span></strong> to properly propagate uncertainty through the linear transformation. This reflects how uncertainty transforms under linear mappings — intuitively, the uncertainty ellipse is “stretched and rotated” by the transition model, and the full transformation is captured by <span class="math inline">\(\mathbf{F} \mathbf{P}_{k-1} \mathbf{F}^\top\)</span>.</p>
-<p>If using an <strong>Extended Kalman Filter (EKF)</strong>, <span class="math inline">\(\mathbf{F}\)</span> would be the <strong>Jacobian of the motion model</strong> with respect to the state, evaluated at the previous estimate.</p>
 </section>
-<section id="update-step" class="level3">
-<h3 class="anchored" data-anchor-id="update-step">Update Step</h3>
+<section id="system-model" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="system-model"><span class="header-section-number">2</span> System Model</h2>
+<section id="state-vector" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="state-vector"><span class="header-section-number">2.1</span> State Vector</h3>
+<ul>
+<li>Description of the state components:
+<ul>
+<li>Position (altitude above launch site)</li>
+<li>Velocity (vertical speed)</li>
+<li>Acceleration (vertical acceleration)</li>
+</ul></li>
+</ul>
+</section>
+<section id="process-model" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="process-model"><span class="header-section-number">2.2</span> Process Model</h3>
+<ul>
+<li>Assumes constant acceleration</li>
+<li>Time-varying state transition matrix (dependent on <code>dt</code>)</li>
+<li>Includes process noise applied to the acceleration component</li>
+</ul>
+</section>
+<section id="measurement-model" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="measurement-model"><span class="header-section-number">2.3</span> Measurement Model</h3>
+<ul>
+<li>Single altimeter measurement (position only)</li>
+<li>Altimeter bias removed using a tare procedure before flight</li>
+</ul>
 </section>
 </section>
-<section id="filter-derivation" class="level2">
-<h2 class="anchored" data-anchor-id="filter-derivation">Filter Derivation</h2>
-<section id="prediction-step-1" class="level3">
-<h3 class="anchored" data-anchor-id="prediction-step-1">Prediction Step</h3>
-<section id="propagation-model" class="level4">
-<h4 class="anchored" data-anchor-id="propagation-model">Propagation Model</h4>
+<section id="filter-structure" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="filter-structure"><span class="header-section-number">3</span> Filter Structure</h2>
+<section id="initialization" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="initialization"><span class="header-section-number">3.1</span> Initialization</h3>
+<ul>
+<li>Zero initial state vector</li>
+<li>Identity covariance matrix</li>
+<li>Altimeter noise and process noise as tunable parameters</li>
+<li>Tare buffer logic to determine launch altitude</li>
+</ul>
 </section>
-<section id="prediction-jacobian" class="level4">
-<h4 class="anchored" data-anchor-id="prediction-jacobian">Prediction Jacobian</h4>
+<section id="prediction-step" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="prediction-step"><span class="header-section-number">3.2</span> Prediction Step</h3>
+<ul>
+<li>Computes time step <code>dt</code> from system time</li>
+<li>Applies constant-acceleration state transition</li>
+<li>Updates state estimate and error covariance</li>
+<li>Uses time-dependent process noise matrix</li>
+</ul>
+</section>
+<section id="update-step" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="update-step"><span class="header-section-number">3.3</span> Update Step</h3>
+<ul>
+<li>Waits until the tare phase completes before accepting updates</li>
+<li>Adjusts altimeter reading relative to launch altitude</li>
+<li>Updates estimate using Kalman gain</li>
+<li>Uses the Joseph form to update the covariance matrix for numerical stability</li>
+</ul>
 </section>
 </section>
-<section id="measurement-update" class="level3">
-<h3 class="anchored" data-anchor-id="measurement-update">Measurement Update</h3>
-<section id="measurement-model" class="level4">
-<h4 class="anchored" data-anchor-id="measurement-model">Measurement Model</h4>
+<section id="tare-mechanism" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="tare-mechanism"><span class="header-section-number">4</span> Tare Mechanism</h2>
+<ul>
+<li>Collects a fixed number of samples before launch</li>
+<li>Computes average to establish the zero-altitude reference (ASL)</li>
+<li>Filters are only applied after tare is complete</li>
+</ul>
 </section>
-<section id="measurement-jacobian" class="level4">
-<h4 class="anchored" data-anchor-id="measurement-jacobian">Measurement Jacobian</h4>
+<section id="parameters-and-tuning" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="parameters-and-tuning"><span class="header-section-number">5</span> Parameters and Tuning</h2>
+<ul>
+<li><code>altimeter_noise_std</code>: defines measurement noise</li>
+<li><code>process_noise_cov_acc</code>: variance for acceleration noise</li>
+<li><code>tare_sample_count</code>: number of samples used for tare averaging</li>
+</ul>
 </section>
+<section id="example-usage" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="example-usage"><span class="header-section-number">6</span> Example Usage</h2>
+<ul>
+<li>Description of how to integrate into a loop or system</li>
+<li>Requirements for time input and measurement format</li>
+<li>Notes on synchronization and timekeeping</li>
+</ul>
 </section>
+<section id="limitations" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="limitations"><span class="header-section-number">7</span> Limitations</h2>
+<ul>
+<li>Assumes motion along a single vertical axis</li>
+<li>Sensitive to poorly tuned noise parameters</li>
+<li>Requires consistent time steps for accurate prediction</li>
+</ul>
 </section>
-<section id="filter-limitations" class="level2">
-<h2 class="anchored" data-anchor-id="filter-limitations">Filter Limitations</h2>
+<section id="future-improvements" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="future-improvements"><span class="header-section-number">8</span> Future Improvements</h2>
+<ul>
+<li>Fuse additional sensors (e.g., IMU) using an Extended Kalman Filter</li>
+<li>Automatically detect launch rather than using a fixed tare sample count</li>
+<li>Add support for non-uniform sampling or robust noise adaptation</li>
+</ul>
 </section>
-<section id="final-notes" class="level2">
-<h2 class="anchored" data-anchor-id="final-notes">Final Notes</h2>
+<section id="appendix" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="appendix"><span class="header-section-number">9</span> Appendix</h2>
+<section id="class-summary" class="level3" data-number="9.1">
+<h3 data-number="9.1" class="anchored" data-anchor-id="class-summary"><span class="header-section-number">9.1</span> Class Summary</h3>
+<ul>
+<li><code>AltimeterCAKF</code>: main filter class
+<ul>
+<li><code>predict(time)</code></li>
+<li><code>update(measurement)</code></li>
+<li><code>get_process_noise_matrix(dt)</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="code-snippet" class="level3" data-number="9.2">
+<h3 data-number="9.2" class="anchored" data-anchor-id="code-snippet"><span class="header-section-number">9.2</span> Code Snippet</h3>
+<ul>
+<li>Link or reference to full implementation file (e.g., GitHub repo or <code>altimeter_cakf.py</code>)</li>
+</ul>
 
 
+<!-- -->
+
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -327,6 +431,57 @@ window.Quarto = {
         container: window.document.getElementById('quarto-embedded-source-code-modal')
       });
       clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
@@ -656,7 +811,104 @@ window.Quarto = {
       }
     }
   });
-  </script>
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Altimeter Constant Acceleration Kalman Filter"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "Jack Johnston"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 3</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo  # Or another clean theme</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> ../references.bib</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># csl: ../ieee.csl  # Optional if you want specific citation styling</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="an">freeze:</span><span class="co"> auto</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Purpose of the filter: estimating vertical position, velocity, and acceleration from altimeter measurements</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Context of use (e.g., onboard state estimation for a rocket launch)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Summary of the model: 1D, constant acceleration, discrete-time Kalman filter</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## System Model</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">### State Vector</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Description of the state components:</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Position (altitude above launch site)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Velocity (vertical speed)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Acceleration (vertical acceleration)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">### Process Model</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Assumes constant acceleration</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Time-varying state transition matrix (dependent on <span class="in">`dt`</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Includes process noise applied to the acceleration component</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">### Measurement Model</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Single altimeter measurement (position only)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Altimeter bias removed using a tare procedure before flight</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Filter Structure</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">### Initialization</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Zero initial state vector</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Identity covariance matrix</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Altimeter noise and process noise as tunable parameters</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Tare buffer logic to determine launch altitude</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">### Prediction Step</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Computes time step <span class="in">`dt`</span> from system time</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Applies constant-acceleration state transition</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Updates state estimate and error covariance</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Uses time-dependent process noise matrix</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Update Step</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Waits until the tare phase completes before accepting updates</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Adjusts altimeter reading relative to launch altitude</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Updates estimate using Kalman gain</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Uses the Joseph form to update the covariance matrix for numerical stability</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tare Mechanism</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Collects a fixed number of samples before launch</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Computes average to establish the zero-altitude reference (ASL)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Filters are only applied after tare is complete</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parameters and Tuning</span></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`altimeter_noise_std`</span>: defines measurement noise</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`process_noise_cov_acc`</span>: variance for acceleration noise</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`tare_sample_count`</span>: number of samples used for tare averaging</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example Usage</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Description of how to integrate into a loop or system</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Requirements for time input and measurement format</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Notes on synchronization and timekeeping</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limitations</span></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Assumes motion along a single vertical axis</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sensitive to poorly tuned noise parameters</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Requires consistent time steps for accurate prediction</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="fu">## Future Improvements</span></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Fuse additional sensors (e.g., IMU) using an Extended Kalman Filter</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Automatically detect launch rather than using a fixed tare sample count</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add support for non-uniform sampling or robust noise adaptation</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## Appendix</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### Class Summary</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`AltimeterCAKF`</span>: main filter class</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`predict(time)`</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`update(measurement)`</span></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span><span class="in">`get_process_noise_matrix(dt)`</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### Code Snippet</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Link or reference to full implementation file (e.g., GitHub repo or <span class="in">`altimeter_cakf.py`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">

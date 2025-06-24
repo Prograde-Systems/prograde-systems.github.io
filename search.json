@@ -72,37 +72,72 @@
   {
     "objectID": "docs/navigation/altimeter_only_kf.html",
     "href": "docs/navigation/altimeter_only_kf.html",
-    "title": "Altimeter-Only Kalman Filter",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
     "section": "",
-    "text": "The Altimeter-Only Kalman Filter is the simplest form of Kalman filter used for state estimation in rocketry. It is used to provide estimates for the rockets vertical kinematics specifically vertical position, velocity and acceleration with observations from from a altimter.\nThe state contains the variables of concern namely vertical, position, velocity and acceleration. The inherant noise in the measurements means there is a degree of uncertainty associated with them.\nThe states of the system evlove over time, and simple differential equations are used to model them. there is also uncertainty in the dynamics of the system, process noise, which means that the states cannot be estiamted deterministically.\nThe term filtering referes to the process of filtering out noise in the measurements to provide an estimate for the state, given the observed measurements.\nThe system state is representede by a vector updated through discrete time increments to generate the next state. The simplest of the state space models is the linear time invarient models, which cam be expressed with equations of the following form:\n\\[\\mathbf{x}_k = \\mathbf{F}\\mathbf{x}_{k-1} + \\mathbf{w}_x\\] \\[\\mathbf{z}_k = \\mathbf{H}\\mathbf{x}_k + \\mathbf{w}_z\\] Where, - \\(\\mathbf{x}_k \\in \\mathbb{R}^n\\) is the state ofthe system describing the condition of \\(n\\) elements at timestep \\(k\\). - \\(\\mathbf{z}_t \\in \\mathbb{R}^m\\) are the measurements at timestep \\(k\\). - \\(\\mathbf{w}_x \\sim \\mathcal{N}(\\mathbf{0}, \\mathbf{Q}_k)\\) is the process noise at timestep k. - \\(\\mathbf{F} \\in \\mathbb{R}^{n \\times n}\\) is the State Transition Matrix. - \\(\\mathbf{H}\\) is the measurement model matrix.\nLinear time invariant models can also be described with continuous-time state equations of the form:\n\\[\\mathbf{\\dot{x}} = \\frac{d \\mathbf{x}}{dt} = \\mathbf{A} \\mathbf{x} + \\mathbf{L} \\mathbf{w}\\] Where \\(\\mathbf{A}\\) and \\(\\mathbf{L}\\) are constant matrices characterising the behavior of the model, and \\(\\mathbf{w}\\) is zero mean Gaussian noise with power spectral density of \\(\\mathbf{\\sigma}^2_\\mathbf{w}\\).\nThe main difference is that \\(\\mathbf{A}\\) models the set of linear differential equations, and is continuous. \\(\\mathbf{F}\\) is discrete, and represents a set of linear equations (not differential) which propagates \\(\\mathbf{x}_{k-1}\\) to \\(\\mathbf{x}_k\\) over a discrete timestep \\(\\Delta t\\)."
+    "text": "Purpose of the filter: estimating vertical position, velocity, and acceleration from altimeter measurements\nContext of use (e.g., onboard state estimation for a rocket launch)\nSummary of the model: 1D, constant acceleration, discrete-time Kalman filter"
   },
   {
-    "objectID": "docs/navigation/altimeter_only_kf.html#kalman-filter",
-    "href": "docs/navigation/altimeter_only_kf.html#kalman-filter",
-    "title": "Altimeter-Only Kalman Filter",
-    "section": "Kalman Filter",
-    "text": "Kalman Filter\n\nThe Kalman filter [TODO - ref] is a recursive state estimation algorithm widely used for aerospace applications. It combines predictions from a system model with noisy sensor measurements to estimate the system’s state and associated uncertainty.\nThe Kalman filter has two steps:\n\nPrediction Step\nThe prediction step advances both the estimated state and its associated uncertainty (covariance) from timestep \\(k-1\\) to timestep \\(k\\) over the interval \\(\\Delta t\\):\n\\[\n\\hat{\\mathbf{x}}_k = \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{B} \\mathbf{u}_{k}\n\\]\n\\[\n\\hat{\\mathbf{P}}_k = \\mathbf{F} \\mathbf{P}_{k-1} \\mathbf{F}^\\top + \\mathbf{Q}_k\n\\]\nHere:\n\n\\(\\mathbf{F}\\) is the state transition matrix, which linearly propagates the system state forward based on a model of the dynamics.\n\\(\\mathbf{B}\\) maps control inputs \\(\\mathbf{u}_k\\) to their effect on the state.\n\\(\\mathbf{Q}_k\\) represents the process noise covariance, accounting for uncertainty in the model.\n\nThe covariance update involves both pre- and post-multiplication by \\(\\mathbf{F}\\) to properly propagate uncertainty through the linear transformation. This reflects how uncertainty transforms under linear mappings — intuitively, the uncertainty ellipse is “stretched and rotated” by the transition model, and the full transformation is captured by \\(\\mathbf{F} \\mathbf{P}_{k-1} \\mathbf{F}^\\top\\).\nIf using an Extended Kalman Filter (EKF), \\(\\mathbf{F}\\) would be the Jacobian of the motion model with respect to the state, evaluated at the previous estimate.\n\n\nUpdate Step"
+    "objectID": "docs/navigation/altimeter_only_kf.html#overview",
+    "href": "docs/navigation/altimeter_only_kf.html#overview",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "",
+    "text": "Purpose of the filter: estimating vertical position, velocity, and acceleration from altimeter measurements\nContext of use (e.g., onboard state estimation for a rocket launch)\nSummary of the model: 1D, constant acceleration, discrete-time Kalman filter"
   },
   {
-    "objectID": "docs/navigation/altimeter_only_kf.html#filter-derivation",
-    "href": "docs/navigation/altimeter_only_kf.html#filter-derivation",
-    "title": "Altimeter-Only Kalman Filter",
-    "section": "Filter Derivation",
-    "text": "Filter Derivation\n\nPrediction Step\n\nPropagation Model\n\n\nPrediction Jacobian\n\n\n\nMeasurement Update\n\nMeasurement Model\n\n\nMeasurement Jacobian"
+    "objectID": "docs/navigation/altimeter_only_kf.html#system-model",
+    "href": "docs/navigation/altimeter_only_kf.html#system-model",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "2 System Model",
+    "text": "2 System Model\n\n2.1 State Vector\n\nDescription of the state components:\n\nPosition (altitude above launch site)\nVelocity (vertical speed)\nAcceleration (vertical acceleration)\n\n\n\n\n2.2 Process Model\n\nAssumes constant acceleration\nTime-varying state transition matrix (dependent on dt)\nIncludes process noise applied to the acceleration component\n\n\n\n2.3 Measurement Model\n\nSingle altimeter measurement (position only)\nAltimeter bias removed using a tare procedure before flight"
   },
   {
-    "objectID": "docs/navigation/altimeter_only_kf.html#filter-limitations",
-    "href": "docs/navigation/altimeter_only_kf.html#filter-limitations",
-    "title": "Altimeter-Only Kalman Filter",
-    "section": "Filter Limitations",
-    "text": "Filter Limitations"
+    "objectID": "docs/navigation/altimeter_only_kf.html#filter-structure",
+    "href": "docs/navigation/altimeter_only_kf.html#filter-structure",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "3 Filter Structure",
+    "text": "3 Filter Structure\n\n3.1 Initialization\n\nZero initial state vector\nIdentity covariance matrix\nAltimeter noise and process noise as tunable parameters\nTare buffer logic to determine launch altitude\n\n\n\n3.2 Prediction Step\n\nComputes time step dt from system time\nApplies constant-acceleration state transition\nUpdates state estimate and error covariance\nUses time-dependent process noise matrix\n\n\n\n3.3 Update Step\n\nWaits until the tare phase completes before accepting updates\nAdjusts altimeter reading relative to launch altitude\nUpdates estimate using Kalman gain\nUses the Joseph form to update the covariance matrix for numerical stability"
   },
   {
-    "objectID": "docs/navigation/altimeter_only_kf.html#final-notes",
-    "href": "docs/navigation/altimeter_only_kf.html#final-notes",
-    "title": "Altimeter-Only Kalman Filter",
-    "section": "Final Notes",
-    "text": "Final Notes"
+    "objectID": "docs/navigation/altimeter_only_kf.html#tare-mechanism",
+    "href": "docs/navigation/altimeter_only_kf.html#tare-mechanism",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "4 Tare Mechanism",
+    "text": "4 Tare Mechanism\n\nCollects a fixed number of samples before launch\nComputes average to establish the zero-altitude reference (ASL)\nFilters are only applied after tare is complete"
+  },
+  {
+    "objectID": "docs/navigation/altimeter_only_kf.html#parameters-and-tuning",
+    "href": "docs/navigation/altimeter_only_kf.html#parameters-and-tuning",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "5 Parameters and Tuning",
+    "text": "5 Parameters and Tuning\n\naltimeter_noise_std: defines measurement noise\nprocess_noise_cov_acc: variance for acceleration noise\ntare_sample_count: number of samples used for tare averaging"
+  },
+  {
+    "objectID": "docs/navigation/altimeter_only_kf.html#example-usage",
+    "href": "docs/navigation/altimeter_only_kf.html#example-usage",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "6 Example Usage",
+    "text": "6 Example Usage\n\nDescription of how to integrate into a loop or system\nRequirements for time input and measurement format\nNotes on synchronization and timekeeping"
+  },
+  {
+    "objectID": "docs/navigation/altimeter_only_kf.html#limitations",
+    "href": "docs/navigation/altimeter_only_kf.html#limitations",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "7 Limitations",
+    "text": "7 Limitations\n\nAssumes motion along a single vertical axis\nSensitive to poorly tuned noise parameters\nRequires consistent time steps for accurate prediction"
+  },
+  {
+    "objectID": "docs/navigation/altimeter_only_kf.html#future-improvements",
+    "href": "docs/navigation/altimeter_only_kf.html#future-improvements",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "8 Future Improvements",
+    "text": "8 Future Improvements\n\nFuse additional sensors (e.g., IMU) using an Extended Kalman Filter\nAutomatically detect launch rather than using a fixed tare sample count\nAdd support for non-uniform sampling or robust noise adaptation"
+  },
+  {
+    "objectID": "docs/navigation/altimeter_only_kf.html#appendix",
+    "href": "docs/navigation/altimeter_only_kf.html#appendix",
+    "title": "Altimeter Constant Acceleration Kalman Filter",
+    "section": "9 Appendix",
+    "text": "9 Appendix\n\n9.1 Class Summary\n\nAltimeterCAKF: main filter class\n\npredict(time)\nupdate(measurement)\nget_process_noise_matrix(dt)\n\n\n\n\n9.2 Code Snippet\n\nLink or reference to full implementation file (e.g., GitHub repo or altimeter_cakf.py)"
   },
   {
     "objectID": "index.html",
