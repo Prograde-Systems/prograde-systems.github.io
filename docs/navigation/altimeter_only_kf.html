@@ -162,8 +162,7 @@ window.Quarto = {
    
   <ul class="collapse">
   <li><a href="#kalman-filter" id="toc-kalman-filter" class="nav-link active" data-scroll-target="#kalman-filter">Kalman Filter</a></li>
-  <li><a href="#prediction-step" id="toc-prediction-step" class="nav-link" data-scroll-target="#prediction-step">Prediction Step</a></li>
-  <li><a href="#measurement-update" id="toc-measurement-update" class="nav-link" data-scroll-target="#measurement-update">Measurement Update</a></li>
+  <li><a href="#filter-derivation" id="toc-filter-derivation" class="nav-link" data-scroll-target="#filter-derivation">Filter Derivation</a></li>
   <li><a href="#filter-limitations" id="toc-filter-limitations" class="nav-link" data-scroll-target="#filter-limitations">Filter Limitations</a></li>
   <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
   </ul>
@@ -204,23 +203,49 @@ window.Quarto = {
 <section id="kalman-filter" class="level2">
 <h2 class="anchored" data-anchor-id="kalman-filter">Kalman Filter</h2>
 <!-- General overview -->
+<p>The Kalman filter [TODO - ref] is a recursive state estimation algorithm widely used for aerospace applications. It combines predictions from a system model with noisy sensor measurements to estimate the system’s state and associated uncertainty.</p>
+<p>The Kalman filter has two steps:</p>
+<section id="prediction-step" class="level3">
+<h3 class="anchored" data-anchor-id="prediction-step">Prediction Step</h3>
+<p>The <strong>prediction step</strong> advances both the estimated state and its associated uncertainty (covariance) from timestep <span class="math inline">\(k-1\)</span> to timestep <span class="math inline">\(k\)</span> over the interval <span class="math inline">\(\Delta t\)</span>:</p>
+<p><span class="math display">\[
+\hat{\mathbf{x}}_k = \mathbf{F} \mathbf{x}_{k-1} + \mathbf{B} \mathbf{u}_{k}
+\]</span></p>
+<p><span class="math display">\[
+\hat{\mathbf{P}}_k = \mathbf{F} \mathbf{P}_{k-1} \mathbf{F}^\top + \mathbf{Q}_k
+\]</span></p>
+<p>Here:</p>
+<ul>
+<li><span class="math inline">\(\mathbf{F}\)</span> is the <strong>state transition matrix</strong>, which linearly propagates the system state forward based on a model of the dynamics.</li>
+<li><span class="math inline">\(\mathbf{B}\)</span> maps control inputs <span class="math inline">\(\mathbf{u}_k\)</span> to their effect on the state.</li>
+<li><span class="math inline">\(\mathbf{Q}_k\)</span> represents the <strong>process noise covariance</strong>, accounting for uncertainty in the model.</li>
+</ul>
+<p>The covariance update involves both <strong>pre- and post-multiplication by <span class="math inline">\(\mathbf{F}\)</span></strong> to properly propagate uncertainty through the linear transformation. This reflects how uncertainty transforms under linear mappings — intuitively, the uncertainty ellipse is “stretched and rotated” by the transition model, and the full transformation is captured by <span class="math inline">\(\mathbf{F} \mathbf{P}_{k-1} \mathbf{F}^\top\)</span>.</p>
+<p>If using an <strong>Extended Kalman Filter (EKF)</strong>, <span class="math inline">\(\mathbf{F}\)</span> would be the <strong>Jacobian of the motion model</strong> with respect to the state, evaluated at the previous estimate.</p>
 </section>
-<section id="prediction-step" class="level2">
-<h2 class="anchored" data-anchor-id="prediction-step">Prediction Step</h2>
-<section id="propagation-model" class="level3">
-<h3 class="anchored" data-anchor-id="propagation-model">Propagation Model</h3>
-</section>
-<section id="prediction-jacobian" class="level3">
-<h3 class="anchored" data-anchor-id="prediction-jacobian">Prediction Jacobian</h3>
+<section id="update-step" class="level3">
+<h3 class="anchored" data-anchor-id="update-step">Update Step</h3>
 </section>
 </section>
-<section id="measurement-update" class="level2">
-<h2 class="anchored" data-anchor-id="measurement-update">Measurement Update</h2>
-<section id="measurement-model" class="level3">
-<h3 class="anchored" data-anchor-id="measurement-model">Measurement Model</h3>
+<section id="filter-derivation" class="level2">
+<h2 class="anchored" data-anchor-id="filter-derivation">Filter Derivation</h2>
+<section id="prediction-step-1" class="level3">
+<h3 class="anchored" data-anchor-id="prediction-step-1">Prediction Step</h3>
+<section id="propagation-model" class="level4">
+<h4 class="anchored" data-anchor-id="propagation-model">Propagation Model</h4>
 </section>
-<section id="measurement-jacobian" class="level3">
-<h3 class="anchored" data-anchor-id="measurement-jacobian">Measurement Jacobian</h3>
+<section id="prediction-jacobian" class="level4">
+<h4 class="anchored" data-anchor-id="prediction-jacobian">Prediction Jacobian</h4>
+</section>
+</section>
+<section id="measurement-update" class="level3">
+<h3 class="anchored" data-anchor-id="measurement-update">Measurement Update</h3>
+<section id="measurement-model" class="level4">
+<h4 class="anchored" data-anchor-id="measurement-model">Measurement Model</h4>
+</section>
+<section id="measurement-jacobian" class="level4">
+<h4 class="anchored" data-anchor-id="measurement-jacobian">Measurement Jacobian</h4>
+</section>
 </section>
 </section>
 <section id="filter-limitations" class="level2">

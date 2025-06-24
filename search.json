@@ -81,21 +81,14 @@
     "href": "docs/navigation/altimeter_only_kf.html#kalman-filter",
     "title": "Altimeter-Only Kalman Filter",
     "section": "Kalman Filter",
-    "text": "Kalman Filter"
+    "text": "Kalman Filter\n\nThe Kalman filter [TODO - ref] is a recursive state estimation algorithm widely used for aerospace applications. It combines predictions from a system model with noisy sensor measurements to estimate the system’s state and associated uncertainty.\nThe Kalman filter has two steps:\n\nPrediction Step\nThe prediction step advances both the estimated state and its associated uncertainty (covariance) from timestep \\(k-1\\) to timestep \\(k\\) over the interval \\(\\Delta t\\):\n\\[\n\\hat{\\mathbf{x}}_k = \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{B} \\mathbf{u}_{k}\n\\]\n\\[\n\\hat{\\mathbf{P}}_k = \\mathbf{F} \\mathbf{P}_{k-1} \\mathbf{F}^\\top + \\mathbf{Q}_k\n\\]\nHere:\n\n\\(\\mathbf{F}\\) is the state transition matrix, which linearly propagates the system state forward based on a model of the dynamics.\n\\(\\mathbf{B}\\) maps control inputs \\(\\mathbf{u}_k\\) to their effect on the state.\n\\(\\mathbf{Q}_k\\) represents the process noise covariance, accounting for uncertainty in the model.\n\nThe covariance update involves both pre- and post-multiplication by \\(\\mathbf{F}\\) to properly propagate uncertainty through the linear transformation. This reflects how uncertainty transforms under linear mappings — intuitively, the uncertainty ellipse is “stretched and rotated” by the transition model, and the full transformation is captured by \\(\\mathbf{F} \\mathbf{P}_{k-1} \\mathbf{F}^\\top\\).\nIf using an Extended Kalman Filter (EKF), \\(\\mathbf{F}\\) would be the Jacobian of the motion model with respect to the state, evaluated at the previous estimate.\n\n\nUpdate Step"
   },
   {
-    "objectID": "docs/navigation/altimeter_only_kf.html#prediction-step",
-    "href": "docs/navigation/altimeter_only_kf.html#prediction-step",
+    "objectID": "docs/navigation/altimeter_only_kf.html#filter-derivation",
+    "href": "docs/navigation/altimeter_only_kf.html#filter-derivation",
     "title": "Altimeter-Only Kalman Filter",
-    "section": "Prediction Step",
-    "text": "Prediction Step\n\nPropagation Model\n\n\nPrediction Jacobian"
-  },
-  {
-    "objectID": "docs/navigation/altimeter_only_kf.html#measurement-update",
-    "href": "docs/navigation/altimeter_only_kf.html#measurement-update",
-    "title": "Altimeter-Only Kalman Filter",
-    "section": "Measurement Update",
-    "text": "Measurement Update\n\nMeasurement Model\n\n\nMeasurement Jacobian"
+    "section": "Filter Derivation",
+    "text": "Filter Derivation\n\nPrediction Step\n\nPropagation Model\n\n\nPrediction Jacobian\n\n\n\nMeasurement Update\n\nMeasurement Model\n\n\nMeasurement Jacobian"
   },
   {
     "objectID": "docs/navigation/altimeter_only_kf.html#filter-limitations",
@@ -116,6 +109,6 @@
     "href": "index.html",
     "title": "Prograde Systems",
     "section": "",
-    "text": "Kalman Filter\nInline example: \\(\\mathbf{x}_k = \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x\\)\nBlock example:\n\\[\n\\begin{aligned}\n\\mathbf{x}_k &= \\mathbf{F} \\mathbf{x}_{k-1} + \\mathbf{w}_x \\\\\n\\mathbf{z}_k &= \\mathbf{H} \\mathbf{x}_k + \\mathbf{w}_z\n\\end{aligned}\n\\]"
+    "text": "Prograde Systems is an open-source, collaborative initiative focused on experimental rocketry and independent aerospace research. Our mission is to develop and share high-quality tools, designs, and knowledge that support advanced rocketry and avionics projects.\nThis site serves as the central hub for our documentation efforts. It includes detailed technical articles, reference materials, and development notes covering a range of topics including flight computer design, navigation and control software, and systems integration.\nBy publishing our work openly, we aim to create a transparent and reusable foundation for student teams, independent researchers, and contributors interested in building robust, modern rocketry systems."
   }
 ]
